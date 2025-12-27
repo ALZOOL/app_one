@@ -25,5 +25,6 @@
             name="Properties"
             parent="properties_menu"
         />
+        
     </data>
 </odoo>
