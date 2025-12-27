@@ -24,7 +24,8 @@
             id="property_menu_item"
             name="Properties"
             parent="properties_menu"
+            action="property_action"
         />
-        
+
     </data>
 </odoo>
