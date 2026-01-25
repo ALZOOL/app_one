@@ -1,0 +1,47 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="tag_view_list">
+            <field name="name">tag.view.list</field>
+            <field name="model">tag</field>
+            <field name="arch" type="xml">
+                <list multi_edit="1">
+                    <field name="name" />
+                </list>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="tag_view_form">
+            <field name="name">tag.view.form</field>
+            <field name="model">tag</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" />
+                            <h1>
+                                <field name="name" placeholder="Tag Name" />
+                            </h1>
+                        </div>
+                    </sheet>
+                </form>
+
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="tag_action">
+            <field name="name">tag.action</field>
+            <field name="res_model">tag</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem
+            id="tag_menu_item"
+            name="Tags"
+            parent="configurations_menu"
+            action="tag_action"
+        />
+
+    </data>
+</odoo>
