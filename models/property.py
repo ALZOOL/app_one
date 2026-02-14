@@ -4,12 +4,15 @@ from odoo.exceptions import ValidationError
 class Property(models.Model):
     _name = 'estate.property'
     _description = 'Estate Property'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    
     name= fields.Char(required=1, default="New", size=4)
-    description= fields.Text()
+    description= fields.Text(tracking=1)
     postcode= fields.Char(required=1)
-    date_availability= fields.Date(default=fields.Date.today, copy=False)
+    date_availability= fields.Date(default=fields.Date.today, copy=False, tracking= 1)
     expected_price= fields.Float(digits=(0,5))
     selling_price= fields.Float(readonly=1)
+    diff = fields.Float(compute='_compute_diff')
     bedrooms= fields.Integer(default=2, copy=False)
     living_area= fields.Integer()
     facades= fields.Integer()
@@ -24,25 +27,41 @@ class Property(models.Model):
     ], default='north')
     active= fields.Boolean(default=True)
     state= fields.Selection([
-        ('new','New'),
-        ('offer_received','Offer Received'),
-        ('offer_accepted','Offer Accepted'),
+        ('draft','Draft'),
+        ('pending','Pending'),
         ('sold','Sold'),
-        ('canceled','Canceled'),        
-    ],string='status',default='new', copy=False, required=True)
+        ],string='status',default='draft', copy=False)
 
 
     owner_id= fields.Many2one('owner', string='Owner')
     tag_ids= fields.Many2many('tag', string='Tags')
 
-    
+    @api.depends('expected_price','selling_price')
+    def _compute_diff(self):
+        for rec in self:
+            rec.diff= rec.expected_price - rec.selling_price
+
+
     @api.constrains('bedrooms')
     def _check_bedrooms_greater_zero(self):
         for rec in self:
             if rec.bedrooms == 0:
                 raise ValidationError("Please Add A Valid Number!.")
 
+    def action_draft(self):
+        for rec in self:
+            print("inside draft action")
+            rec.state='draft'
 
+    def action_pending(self):
+        for rec in self:
+            print("inside pending action")
+            rec.state='pending'
+
+    def action_sold(self):
+        for rec in self:
+            print("inside sold action")
+            rec.state='sold'
 
     @api.model_create_multi
     def create(self, vals):
